@@ -1,0 +1,48 @@
+#!/usr/bin/env sh
+# Why: enforce daily Quick Check (4.2 §4.1) automatically.
+# Anything that gets committed has at least passed typecheck + lint.
+
+set -e
+
+echo "🛡️  Running pre-commit checks..."
+
+# Skip if just doing a merge or revert (no actual code change)
+if [ -e .git/MERGE_HEAD ]; then
+  echo "  Skipping: merge in progress"
+  exit 0
+fi
+
+# Stage 1: Type check (catches 80% of bugs before they exist)
+echo "  📐 typecheck..."
+pnpm typecheck || {
+  echo "❌ TypeScript errors found. Commit blocked."
+  echo "   Run: pnpm typecheck"
+  exit 1
+}
+
+# Stage 2: Lint (style + anti-pattern detection)
+echo "  🧹 lint..."
+pnpm lint || {
+  echo "❌ Lint errors found. Commit blocked."
+  echo "   Try: pnpm lint --fix"
+  exit 1
+}
+
+# Stage 3: Quick scan for secrets / debug artifacts
+echo "  🔒 secret scan..."
+STAGED=$(git diff --cached --name-only --diff-filter=ACM)
+if [ -n "$STAGED" ]; then
+  # Patterns to block (LLM key prefixes, .env file paths, common dump indicators)
+  if echo "$STAGED" | grep -E '^\.env$|^apps/.*\/\.env$' > /dev/null; then
+    echo "❌ Attempting to commit .env file. Use .env.example instead."
+    exit 1
+  fi
+  PATTERN='sk-[A-Za-z0-9]{20,}|AKIA[A-Z0-9]{16}|console\.log.*password|console\.log.*token'
+  if git diff --cached -U0 | grep -E "$PATTERN" > /dev/null; then
+    echo "❌ Possible secret or sensitive console.log detected."
+    echo "   Review your staged changes manually."
+    exit 1
+  fi
+fi
+
+echo "✅ Pre-commit checks passed."

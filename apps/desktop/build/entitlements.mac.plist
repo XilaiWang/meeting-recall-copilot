@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <!-- Why: Required for live microphone capture during meeting sessions -->
+    <key>com.apple.security.device.audio-input</key>
+    <true/>
+
+    <!-- Why: Required for on-device speech-to-text transcription via SFSpeechRecognizer -->
+    <key>com.apple.security.device.speech-recognition</key>
+    <true/>
+
+    <!-- Why: Allows spawning our own compiled Swift binaries (SpeechHelper, QAMatchingOverlay)
+         without library validation failures under hardened runtime -->
+    <key>com.apple.security.cs.disable-library-validation</key>
+    <true/>
+
+    <!-- Why: Electron/Node.js JIT compilation requires executable memory pages -->
+    <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+    <true/>
+  </dict>
+</plist>

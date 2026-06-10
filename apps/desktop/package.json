@@ -1,0 +1,111 @@
+{
+  "name": "@qa-matching/desktop",
+  "version": "0.0.1",
+  "private": true,
+  "main": "out/main/index.js",
+  "build": {
+    "appId": "com.qa-matching.desktop",
+    "productName": "QA Matching",
+    "extraResources": [
+      {
+        "from": "src/main/db/migrations",
+        "to": "migrations"
+      },
+      {
+        "from": "resources/SpeechHelper",
+        "to": "SpeechHelper"
+      },
+      {
+        "from": "resources/QAMatchingOverlay",
+        "to": "QAMatchingOverlay"
+      },
+      {
+        "from": "resources/CAMPlusSpeaker.mlmodelc",
+        "to": "CAMPlusSpeaker.mlmodelc"
+      },
+      {
+        "from": "resources/models",
+        "to": "models"
+      }
+    ],
+    "afterPack": "scripts/after-pack.cjs",
+    "mac": {
+      "icon": "resources/icon.icns",
+      "category": "public.app-category.productivity",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "minimumSystemVersion": "14.4",
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "用于会议时实时识别对方发言（本人声道）的问题",
+        "NSSpeechRecognitionUsageDescription": "用于将语音转写为文字以匹配记忆卡片",
+        "NSAudioCaptureUsageDescription": "用于采集会议/系统音频，识别对方的问题（对方声道）"
+      }
+    },
+    "win": {
+      "icon": "resources/icon.png"
+    },
+    "linux": {
+      "icon": "resources/icon.png"
+    }
+  },
+  "scripts": {
+    "build:swift": "swiftc -O src/swift/QAMatchingOverlay.swift -o resources/QAMatchingOverlay && swiftc -O src/swift/SpeechHelper.swift src/swift/SystemAudioTap.swift src/swift/SpeakerGate.swift src/swift/AudioFeature.swift -o resources/SpeechHelper",
+    "dev": "pnpm run build:swift && electron-vite dev",
+    "build": "pnpm run build:swift && electron-vite build",
+    "dist": "pnpm run build:swift && electron-vite build && electron-builder",
+    "install:app": "rm -rf '/Applications/QA Matching.app' && cp -R 'dist/mac-arm64/QA Matching.app' '/Applications/'",
+    "ship": "pnpm dist && pnpm install:app",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
+    "lint": "eslint src",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:integration": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "db:generate": "drizzle-kit generate"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^4.2.0",
+    "@phosphor-icons/react": "^2.1.10",
+    "@qa-matching/shared": "workspace:*",
+    "@tanstack/react-query": "^5.59.0",
+    "@timephy/rnnoise-wasm": "^1.0.0",
+    "adm-zip": "^0.5.17",
+    "better-sqlite3": "^12.9.0",
+    "drizzle-orm": "^0.45.2",
+    "gsap": "^3.15.0",
+    "mammoth": "^1.12.0",
+    "motion": "^12.40.0",
+    "node-machine-id": "^1.1.12",
+    "pdf-parse": "^2.4.5",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "react-router-dom": "^6.28.0",
+    "sqlite-vec": "^0.1.9",
+    "ts-fsrs": "^5.4.1",
+    "zod": "^3.25.76",
+    "zustand": "^5.0.0"
+  },
+  "devDependencies": {
+
+    "@types/adm-zip": "^0.5.8",
+    "@types/better-sqlite3": "^7.6.0",
+    "@types/pdf-parse": "^1.1.5",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "autoprefixer": "^10.4.0",
+    "drizzle-kit": "^0.29.0",
+    "electron": "^39.0.0",
+    "electron-builder": "^25.1.0",
+    "electron-vite": "^2.3.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

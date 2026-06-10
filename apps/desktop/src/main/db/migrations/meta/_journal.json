@@ -1,0 +1,34 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1779114059297,
+      "tag": "0000_safe_giant_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1779191941616,
+      "tag": "0001_new_jocasta",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1779199602598,
+      "tag": "0002_complete_diamondback",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1779207289209,
+      "tag": "0003_cards_table",
+      "breakpoints": true
+    }
+  ]
+}

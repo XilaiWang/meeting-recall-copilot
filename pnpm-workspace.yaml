@@ -1,0 +1,15 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+allowBuilds:
+  esbuild: true
+  better-sqlite3: true
+  electron: true
+  argon2: true
+  # Why: transitive build-script deps pulled in by @huggingface/transformers
+  # (onnxruntime-node ships prebuilt napi-v6 binaries) + sqlite-vec. Approving them
+  # here keeps `pnpm install` green on CI (this is the authoritative build-approval
+  # location for the workspace).
+  onnxruntime-node: true
+  protobufjs: true
+  sharp: true

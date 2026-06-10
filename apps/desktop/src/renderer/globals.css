@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-white text-gray-900 antialiased;
+  }
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Why: DynamicIsland expand — pill grows downward from notch height,
+   matching Textream's 0.35s easeOut expansion animation. */
+@keyframes floatExpand {
+  from { transform: scaleY(0.12); opacity: 0; }
+  to   { transform: scaleY(1);    opacity: 1; }
+}
+
+@keyframes cardFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Why: dismiss sequence mirrors Textream — content disappears first (0.15s),
+   then the container collapses (0.3s, delayed 0.15s). */
+@keyframes contentFadeOut {
+  to { opacity: 0; transform: translateY(4px); }
+}
+
+@keyframes floatCollapse {
+  to { transform: scaleY(0.12); opacity: 0; }
+}

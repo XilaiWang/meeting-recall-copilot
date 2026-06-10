@@ -1,0 +1,33 @@
+# qa-matching backend — Fly.io deployment config
+# Deploy: fly deploy (run from repo root)
+app = "qa-matching-api"
+primary_region = "sin"
+
+[build]
+  dockerfile = "Dockerfile"
+
+# Why: release_command runs migrations before the new instance takes traffic.
+# If migrations fail, the deploy halts and the old version keeps serving.
+[deploy]
+  release_command = "node --import tsx/esm src/db/migrate.ts"
+
+[env]
+  PORT = "3000"
+  NODE_ENV = "production"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+  [http_service.concurrency]
+    type = "connections"
+    hard_limit = 25
+    soft_limit = 20
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"

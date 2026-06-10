@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1779041118046,
+      "tag": "0000_gifted_thunderball",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1779041278944,
+      "tag": "0001_concerned_justin_hammer",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1779043718132,
+      "tag": "0002_mute_hellfire_club",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1779109646557,
+      "tag": "0003_dapper_chameleon",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1779110860218,
+      "tag": "0004_polite_iron_lad",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1748047200000,
+      "tag": "0005_refresh_token_family",
+      "breakpoints": true
+    }
+  ]
+}

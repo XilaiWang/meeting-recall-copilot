@@ -1,0 +1,12 @@
+**/node_modules
+**/dist
+**/.env
+**/.env.*
+**/*.local
+apps/desktop
+.git
+.github
+docs
+skills-lock.json
+SETUP-INSTRUCTIONS.md
+README.md

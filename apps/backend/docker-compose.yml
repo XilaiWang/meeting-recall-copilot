@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: qa-matching-postgres
+    environment:
+      POSTGRES_USER: qauser
+      POSTGRES_PASSWORD: qapass
+      POSTGRES_DB: qa_matching
+    ports:
+      - "5432:5432"
+    volumes:
+      - qa-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U qauser -d qa_matching"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  qa-postgres-data:

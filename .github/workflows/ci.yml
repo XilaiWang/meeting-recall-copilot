@@ -1,0 +1,99 @@
+# Why: CI enforces what local hooks miss + ensures tests pass before deploy.
+# Runs on every push and PR to main (Layer 3 of 4-layer enforcement, 4.2 §0).
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    name: Typecheck + Lint + Test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: qauser
+          POSTGRES_PASSWORD: qapass
+          POSTGRES_DB: qa_matching_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U qauser"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://qauser:qapass@localhost:5432/qa_matching_test
+      JWT_ACCESS_SECRET: test-access-secret-do-not-use-in-prod-32bytes
+      JWT_REFRESH_SECRET: test-refresh-secret-do-not-use-in-prod-32bytes
+      # Why: CI provisions Postgres via the `services:` block above and runs the
+      # `db:migrate` step explicitly, so the vitest globalSetup must NOT try to
+      # `docker compose up` its own container — that would clash on port 5432.
+      SKIP_DB_SETUP: '1'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.1.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Run migrations
+        run: pnpm --filter @qa-matching/backend db:migrate
+
+      - name: Run backend tests
+        run: pnpm --filter @qa-matching/backend test:ci
+
+      - name: Run desktop tests
+        # Why: desktop unit tests are pure-logic (no Electron runtime or DB),
+        # so they run in the same job. Previously omitted entirely — the 42
+        # desktop tests were not gated by CI at all.
+        run: pnpm --filter @qa-matching/desktop test
+
+  audit:
+    name: Security audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.1.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Audit
+        # Why: --prod limits audit to runtime dependencies only (4.2 §7.2).
+        # Build-tool devDeps (@electron/rebuild → node-gyp → tar) contain HIGH
+        # tar CVEs that cannot be fixed via overrides across a major version jump
+        # (tar@6→7 is a breaking API change). Since these packages extract only
+        # trusted Node.js binary headers and never touch user data, the risk is
+        # accepted. Runtime deps (what ships to users) must stay clean.
+        run: pnpm audit --audit-level=high --prod

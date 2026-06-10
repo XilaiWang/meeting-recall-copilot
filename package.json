@@ -1,0 +1,54 @@
+{
+  "name": "qa-matching",
+  "version": "0.0.1",
+  "private": true,
+  "description": "会议回忆助手 — 把你准备过的资料，在会议需要时一句话递到眼前",
+  "scripts": {
+    "dev": "pnpm --parallel --filter='./apps/*' dev",
+    "build": "pnpm --filter='./apps/*' build",
+    "typecheck": "pnpm --filter='./apps/*' typecheck && pnpm --filter='./packages/*' typecheck",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "pnpm --filter='./apps/*' test",
+    "test:unit": "pnpm --filter='./apps/*' test:unit --run",
+    "test:integration": "pnpm --filter='./apps/*' test:integration --run",
+    "test:coverage": "pnpm --filter='./apps/*' test:coverage --run",
+    "preflight": "pnpm typecheck && pnpm lint && pnpm test:unit",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
+    "@commitlint/types": "^19.0.0",
+    "@eslint/js": "^9.0.0",
+    "@vitest/coverage-v8": "^2.1.9",
+    "eslint": "^9.0.0",
+    "husky": "^9.0.0",
+    "typescript": "^5.5.0",
+    "typescript-eslint": "^8.0.0"
+  },
+  "packageManager": "pnpm@11.1.2",
+  "engines": {
+    "node": ">=20"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "better-sqlite3",
+      "argon2"
+    ],
+    "overrides": {
+      "tar": ">=7.5.11"
+    },
+    "auditConfig": {
+      "ignoredCves": [
+        "GHSA-34x7-hfp2-rc4v",
+        "GHSA-83g3-92jg-28cx",
+        "GHSA-8qq5-rm4j-mr97",
+        "GHSA-9ppj-qmqm-q256",
+        "GHSA-qffp-2rhf-9h96",
+        "GHSA-r6q2-hw4h-h46w"
+      ]
+    }
+  }
+}

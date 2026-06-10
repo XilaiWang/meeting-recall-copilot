@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+# Why: enforce Conventional Commits format (4.2 §3.2).
+# Bad commit messages are blocked before they enter history.
+
+pnpm exec commitlint --edit "$1"
